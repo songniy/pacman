@@ -1,9 +1,17 @@
+/* this file houses all the helper functions to use for pacman.js
+Author: Yin Song*/
+
 const fs = require('fs');
 
-//the function initialize reads the input file and
-//returns array initial variables for the Grid, the start Position
-//the movement and wall locations where the values are integers
+/**
+ *
+ * @param {String} inputFile
+ * @returns {array} containing initial variables broken out of the input file
+ */
 function initialize(inputFile) {
+  /*the function reads the input file and
+  returns an array of initial variables for the Grid, the start Position
+  the movement and wall locations where the values are integers*/
   const initializeData = fs.readFileSync(inputFile, 'utf8');
   let initDataArray = initializeData.trim().split('\r\n');
   const gridDims = initDataArray[0].split(' ').map((elem) => parseInt(elem));
@@ -14,9 +22,15 @@ function initialize(inputFile) {
   return [gridDims, startPos, movement, walls];
 }
 
-//based on the grid dimensions and walls, create a grid populated with 1
-//for coins and x for walls.
+/**
+ *
+ * @param {Array} gridDims should have length 2. Possible future add to check for data validity
+ * @param {Map} walls we only add walls if the walls appear in the grid
+ * @returns {Array} 2d array where 1's are coins and 'x' are walls
+ */
 function createGrid(gridDims, walls) {
+  /*the function returns a matrix based on the grid dimensions and walls.
+   where 1's are for coins and 'x' are for walls.*/
   let grid = [];
   //since we will only be using .push we have to build
   //this grid backwards starting with the last row
@@ -34,6 +48,27 @@ function createGrid(gridDims, walls) {
   return grid;
 }
 
-function traverse(grid, startPos, movement) {}
+/**
+ *
+ * @param {Array} grid the initial grid for pacman to traverse
+ * @param {Array} startPos the start position in x,y coordinates
+ * @param {String} movement the String defining how pacman moves
+ */
+function traverse(grid, startPos, movement) {
+  /* The function traverse the grid based on the start position and movement.
+  It returns the final position and the total coins collected */
+  let xPos = -1;
+  let yPos = -1;
+  let coins = 0;
+  let initialX = startPos[0];
+  let initialY = grid.length - 1 - startPos[1];
+  let initialPos = grid[initialY][initialX];
+
+  //edge case if we start in a wall
+  if (initialPos === 'x') {
+    return [xPos, yPos, coins];
+  } else {
+  }
+}
 
 module.exports = { initialize, createGrid, traverse };
