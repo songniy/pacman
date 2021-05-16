@@ -6,7 +6,7 @@ const fs = require('fs');
 /**
  *
  * @param {String} inputFile
- * @returns {array} containing initial variables broken out of the input file
+ * @returns {array} contains initial variables based on the input
  */
 function initialize(inputFile) {
   /*the function reads the input file and
@@ -59,16 +59,64 @@ function traverse(grid, startPos, movement) {
   It returns the final position and the total coins collected */
   let xPos = -1;
   let yPos = -1;
-  let coins = 0;
+  let coinsCollected = 0;
   let initialX = startPos[0];
   let initialY = grid.length - 1 - startPos[1];
   let initialPos = grid[initialY][initialX];
-
+  console.log(initialPos);
+  function eachMove(grid, prevXPos, prevYPos, move, coins) {
+    /*function that takes in the grid, current position, the move and the coins total.
+    If the new move is invalid like in a wall or outisde of the grid then return the
+    original position. If the new position is valid then move there and collect a coin
+    if there is one. returns the position after the move is attempted*/
+    let currXPos = prevXPos;
+    let currYPos = prevYPos;
+    coinsCollected = coins;
+    if (move === 'N') {
+      currYPos++;
+    } else if (move === 'E') {
+      currXPos++;
+    } else if (move === 'S') {
+      currYPos--;
+    } else if (move === 'W') {
+      currXPos--;
+    }
+    //if the new move is off the board, then return the original position
+    if (
+      currXPos >= grid[0].length ||
+      currXPos < 0 ||
+      currYPos >= grid.length ||
+      currYPos < 0
+    ) {
+      //if new position is a wall or outside of the grid, return the original position
+      return [prevXPos, prevYPos];
+    } else if (grid[grid.length - 1 - currYPos][currXPos] === 'x') {
+      //if the new move lands us in a wall, return the original position
+      return [prevXPos, prevYPos];
+    } else {
+      //if the new move is valid
+      if (grid[grid.length - 1 - currYPos][currXPos] === 1) {
+        //modifies the grid so that the coin is collected
+        grid[grid.length - 1 - currYPos][currXPos] = 0;
+        coinsCollected++;
+      }
+      return [currXPos, currYPos];
+    }
+  }
   //edge case if we start in a wall
   if (initialPos === 'x') {
-    return [xPos, yPos, coins];
+    return [xPos, yPos, coinsCollected];
   } else {
+    grid[initialY][initialX] = 0;
+    xPos = initialX;
+    yPos = initialY;
+    for (let i = 0; i < movement.length; i++) {
+      let move = movement[i];
+      [xPos, yPos] = eachMove(grid, xPos, yPos, move, coinsCollected);
+      console.log(move);
+    }
   }
+  return [xPos, yPos, coinsCollected];
 }
 
 module.exports = { initialize, createGrid, traverse };
